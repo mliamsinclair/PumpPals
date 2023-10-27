@@ -1,4 +1,4 @@
-package com.Examples;
+/*package com.Examples;
 
 import org.springframework.data.annotation.Id;
 
@@ -25,4 +25,4 @@ public class Customer {
         id, firstName, lastName);
   }
 
-}
+}*/
