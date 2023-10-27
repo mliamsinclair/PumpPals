@@ -1,4 +1,4 @@
-package com.pumppals.pumppalsapi;
+package com.pumppals.pumppalsapi.model;
 
 import java.util.List;
 
@@ -14,14 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "user")
-public class User {
+public class PPUser {
     @Id
     private ObjectId id;
     private List<String> fitnessGoals;
     private String name;
+    private String username;
+    private String password;
     private int age;
     private int height;
     private int weight;
-    private String accountID;
     private String bio;
 }
