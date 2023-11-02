@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.pumppals.pumppalsapi.model.PPUser;
-import com.pumppals.pumppalsapi.repository.UserRepo;
+import com.pumppals.pumppalsapi.model.UserInfo;
+import com.pumppals.pumppalsapi.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -18,21 +18,21 @@ public class UserService {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserRepo userRepository;
+    private UserRepository userRepository;
 
-    public List<PPUser> getAllUsers() {
+    public List<UserInfo> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Optional<PPUser> getUserByUsername(String username) {
+    public Optional<UserInfo> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    public Optional<PPUser> getUserById(ObjectId id) {
+    public Optional<UserInfo> getUserById(ObjectId id) {
         return userRepository.findById(id);
     }
 
-    public PPUser createUser(PPUser user) {
+    public UserInfo createUser(UserInfo user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
