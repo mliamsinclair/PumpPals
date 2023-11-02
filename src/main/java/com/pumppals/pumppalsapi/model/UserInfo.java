@@ -14,13 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "user")
-public class PPUser {
+public class UserInfo {
     @Id
     private ObjectId id;
     private List<String> fitnessGoals;
     private String name;
     private String username;
     private String password;
+    private String roles = "ROLE_USER";
     private int age;
     private int height;
     private int weight;
