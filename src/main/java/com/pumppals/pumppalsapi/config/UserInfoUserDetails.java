@@ -13,10 +13,13 @@ import java.util.stream.Collectors;
 
 public class UserInfoUserDetails implements UserDetails {
 
+    // user details class to get user info from database
     private String name;
     private String password;
+    // authorities to check if user has permission to access certain endpoints
     private List<GrantedAuthority> authorities;
 
+    // constructor to get user info from database
     public UserInfoUserDetails(UserInfo userInfo) {
         name=userInfo.getUsername();
         password=userInfo.getPassword();
@@ -25,6 +28,7 @@ public class UserInfoUserDetails implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    // getters
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -40,6 +44,7 @@ public class UserInfoUserDetails implements UserDetails {
         return name;
     }
 
+    // methods to check if user is enabled, not expired, not locked, and not expired
     @Override
     public boolean isAccountNonExpired() {
         return true;

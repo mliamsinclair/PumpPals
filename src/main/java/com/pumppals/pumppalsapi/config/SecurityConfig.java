@@ -24,14 +24,20 @@ import com.pumppals.pumppalsapi.filter.JwtAuthFilter;
 @EnableMethodSecurity
 public class SecurityConfig {
     
+    // authentication filter to check for JWT in header
     @Autowired
     private JwtAuthFilter authFilter;
 
+    // user details service to get user info from database
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserInfoUserDetailsService();
     }
 
+    // security filter chain to configure security
+    // disable csrf, allow /api/create and /api/authenticate without authentication
+    // all other /api/** requests require authentication
+    // use JwtAuthFilter to check for JWT in header
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
@@ -46,11 +52,16 @@ public class SecurityConfig {
                 .build();
     }
 
+    // password encoder to encode passwords
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // authentication provider to authenticate users
+    // use user details service to get user info from database
+    // use password encoder to encode passwords
+    // return authentication provider
     @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authenticationProvider=new DaoAuthenticationProvider();
@@ -58,6 +69,8 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
+
+    // authentication manager to authenticate users
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

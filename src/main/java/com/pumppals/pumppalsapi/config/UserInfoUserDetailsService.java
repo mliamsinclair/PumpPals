@@ -14,9 +14,11 @@ import java.util.Optional;
 @Component
 public class UserInfoUserDetailsService implements UserDetailsService {
 
+    // user details service to get user info from database
     @Autowired
     private UserRepository repository;
 
+    // load user by username from database
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserInfo> userInfo = repository.findByUsername(username);

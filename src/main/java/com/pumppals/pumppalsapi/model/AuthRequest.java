@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+// model to handle user authentication requests
 public class AuthRequest {
     private String username;
     private String password;
