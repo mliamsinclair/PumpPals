@@ -155,6 +155,9 @@ public class UserController {
                 byte[] croppedBytes = baos.toByteArray();
                 baos.close();
 
+                // Delete the local file
+                file.getFile().delete();
+
                 return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(croppedBytes);
             } else {
                 return ResponseEntity.badRequest().body("File does not exist.");
