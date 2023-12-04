@@ -29,5 +29,13 @@ public class PostInfo {
     private ArrayList<String> commenters = new ArrayList<String>(); // Add commenters field
     private ArrayList<String> likers = new ArrayList<String>(); // Add likers field
     private String postId;
+    private boolean hasPicture;
+
+    public boolean getHasPicture() {
+        return this.hasPicture;
+    }
     
+    public void setHasPicture(boolean hasPicture) {
+        this.hasPicture = hasPicture;
+    }
 }

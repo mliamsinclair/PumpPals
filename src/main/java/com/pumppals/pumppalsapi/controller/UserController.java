@@ -175,7 +175,6 @@ public class UserController {
     // get user by token
     @GetMapping("/user/username")
     public ResponseEntity<String> getUserByToken(Principal principal) {
-        System.out.println("Getting user by token " + principal.getName());
         return ResponseEntity.ok().body(principal.getName());
     }
 
