@@ -1,5 +1,6 @@
 package com.pumppals.pumppalsapi.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,16 +8,20 @@ import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.pumppals.pumppalsapi.exceptions.FileDownloadException;
 import com.pumppals.pumppalsapi.model.PostInfo;
 import com.pumppals.pumppalsapi.model.UserInfo;
+import com.pumppals.pumppalsapi.service.FileService;
 import com.pumppals.pumppalsapi.service.PostService;
 import com.pumppals.pumppalsapi.service.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -27,6 +32,9 @@ public class PostController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FileService fileService;
 
     // returns a list of all recent posts
     @GetMapping("/posts")
@@ -47,9 +55,57 @@ public class PostController {
         Optional<UserInfo> user = userService.getUserByUsername(principal.getName());
         post.setName(user.get().getName());
         post.setUploadDate(LocalDateTime.now());
+        post.setHasPicture(false);
         post = postService.createPost(post);
         System.out.println(post);
         return ResponseEntity.ok().body(post);
+    }
+
+    @PostMapping("/posts/create/picture")
+    public ResponseEntity<String> createPicturePost(@RequestParam("file") MultipartFile file, Principal principal,
+            @RequestPart("post") PostInfo post) {
+        System.out.println("createPicturePost for " + principal.getName() + " with file " + file.getOriginalFilename());
+        String username = principal.getName();
+        post.setUsername(username);
+        Optional<UserInfo> user = userService.getUserByUsername(username);
+        post.setName(user.get().getName());
+        post.setUploadDate(LocalDateTime.now());
+        post.setHasPicture(true);
+        post = postService.createPost(post);
+        System.out.println(post);
+        String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+        System.out.println("Uploading picture for " + username + " with extension " + fileExtension);
+        if (fileExtension != null
+                && (fileExtension.equals("png") || fileExtension.equals("jpg") || fileExtension.equals("jpeg"))) {
+            try {
+                // set file name to postId + .png
+                String fileName = post.getPostId() + ".png";
+                System.out.println(fileName);
+                // upload original image to s3
+                fileService.uploadFile(file, fileName);
+
+                return ResponseEntity.ok().body("Profile picture uploaded successfully.");
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Failed to upload picture.");
+            }
+        } else {
+            return ResponseEntity.badRequest()
+                    .body("Invalid file format. Only PNG, JPG, and JPEG formats are allowed.");
+        }
+    }
+
+    // returns a post's picture
+    @GetMapping("/posts/picture/{id}")
+    public ResponseEntity<Object> getPostPicture(@PathVariable String id) {
+        try {
+            System.out.println("getPostPicture for " + id + ".png");
+            ResponseEntity<Object> response = ResponseEntity.ok().body(fileService.downloadFile(id + ".png"));
+            // Delete the picture from local storage after sending
+            return response;
+        } catch (FileDownloadException | IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to download picture.");
+        }
     }
 
     // updates a post
