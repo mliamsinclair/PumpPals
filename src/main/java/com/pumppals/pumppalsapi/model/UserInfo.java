@@ -1,5 +1,6 @@
 package com.pumppals.pumppalsapi.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -22,8 +23,11 @@ public class UserInfo {
     private String username;
     private String password;
     private String roles = "ROLE_USER";
-    private int age;
+    private String dateOfBirth;
     private int height;
     private int weight;
     private String bio;
+    private String gender;
+    private ArrayList<String> following = new ArrayList<String>();
+    private ArrayList<String> followers = new ArrayList<String>();
 }
