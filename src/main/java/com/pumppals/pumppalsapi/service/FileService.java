@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -83,23 +85,25 @@ public class FileService {
             throw new FileDownloadException("Requested bucket does not exist or is empty");
         }
         S3Object object = s3Client.getObject(bucketName, fileName);
-        try (S3ObjectInputStream s3is = object.getObjectContent()) {
-            try (FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
-                byte[] read_buf = new byte[1024];
-                int read_len = 0;
-                while ((read_len = s3is.read(read_buf)) > 0) {
-                    fileOutputStream.write(read_buf, 0, read_len);
-                }
+        Path pathObject = Paths.get(fileName);
+        byte[] fileContent;
+        try (S3ObjectInputStream s3is = object.getObjectContent();
+                FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
+            byte[] read_buf = new byte[1024];
+            int read_len;
+            while ((read_len = s3is.read(read_buf)) > 0) {
+                fileOutputStream.write(read_buf, 0, read_len);
             }
-            Path pathObject = Paths.get(fileName);
-            Resource resource = new UrlResource(pathObject.toUri());
-
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                throw new FileDownloadException("Could not find the file!");
-            }
+            fileContent = Files.readAllBytes(pathObject);
         }
+        Resource resource = new ByteArrayResource(fileContent);
+        try {
+            // Delete the file from local storage
+            Files.deleteIfExists(pathObject);
+        } catch (IOException e) {
+            throw new IOException("Could not delete the file!", e);
+        }
+        return resource;
     }
 
     public boolean delete(String fileName) {

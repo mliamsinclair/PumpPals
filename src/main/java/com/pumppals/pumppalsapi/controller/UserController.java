@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.core.io.Resource;
 import com.pumppals.pumppalsapi.exceptions.FileDownloadException;
 import com.pumppals.pumppalsapi.model.AuthRequest;
 import com.pumppals.pumppalsapi.model.UserInfo;
@@ -128,7 +129,7 @@ public class UserController {
     public ResponseEntity<?> getProfilePicture(@PathVariable String username) {
         System.out.println("Getting profile picture for " + username);
         try {
-            UrlResource file = (UrlResource) fileService.downloadFile(username);
+            Resource file = (Resource) fileService.downloadFile(username);
             if (file != null) {
                 // Read the image into a BufferedImage
                 BufferedImage originalImage = ImageIO.read(file.getInputStream());
@@ -155,16 +156,15 @@ public class UserController {
                 byte[] croppedBytes = baos.toByteArray();
                 baos.close();
 
-                // Delete the local file
-                file.getFile().delete();
-
                 return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(croppedBytes);
             } else {
                 return ResponseEntity.badRequest().body("File does not exist.");
             }
         } catch (IOException e) {
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve profile picture.");
         } catch (FileDownloadException e) {
+            System.out.println(e);
             return ResponseEntity.badRequest().body("File does not exist.");
         } catch (Exception e) {
             System.out.println(e);
