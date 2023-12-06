@@ -97,6 +97,11 @@ public class PostService {
                 posts.add(post);
             }
         }
+        // add user's posts
+        List<PostInfo> userPosts = postRepository.findByUsername(username);
+        for (PostInfo post : userPosts) {
+            posts.add(post);
+        }
         // sort by upload date
         posts.sort((p1, p2) -> p2.getUploadDate().compareTo(p1.getUploadDate()));
         return posts;

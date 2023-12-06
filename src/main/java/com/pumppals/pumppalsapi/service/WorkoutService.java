@@ -75,6 +75,9 @@ public class WorkoutService {
                 workouts.addAll(workoutRepository.findByUsername(following.get(i)));
             }
         }
+        // add user's workouts
+        workouts.addAll(workoutRepository.findByUsername(username));
+        workouts.sort((w1, w2) -> w2.getDate().compareTo(w1.getDate()));
         return workouts;
     }
 }
