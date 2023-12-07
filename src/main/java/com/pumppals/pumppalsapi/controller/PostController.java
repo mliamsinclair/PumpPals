@@ -64,6 +64,7 @@ public class PostController {
     @PostMapping("/posts/create/picture")
     public ResponseEntity<String> createPicturePost(@RequestParam("file") MultipartFile file, Principal principal,
             @RequestPart("post") PostInfo post) {
+        System.out.println("createPicturePost");
         System.out.println("createPicturePost for " + principal.getName() + " with file " + file.getOriginalFilename());
         String username = principal.getName();
         post.setUsername(username);
@@ -71,18 +72,21 @@ public class PostController {
         post.setName(user.get().getName());
         post.setUploadDate(LocalDateTime.now());
         post.setHasPicture(true);
-        post = postService.createPost(post);
         System.out.println(post);
         String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         System.out.println("Uploading picture for " + username + " with extension " + fileExtension);
         if (fileExtension != null
-                && (fileExtension.equals("png") || fileExtension.equals("jpg") || fileExtension.equals("jpeg"))) {
+                && (fileExtension.equals("png") || fileExtension.equals("jpg") || fileExtension.equals("jpeg") || fileExtension.equals("gif"))) {
             try {
                 // set file name to postId + .png
-                String fileName = post.getPostId() + ".png";
-                System.out.println(fileName);
+                String filename = file.getOriginalFilename();
+                post.setPictureName(filename);
+                System.out.println(filename);
                 // upload original image to s3
-                fileService.uploadFile(file, fileName);
+                fileService.uploadFile(file, filename);
+                // create post
+                post = postService.createPost(post);
+                System.out.println(post);
 
                 return ResponseEntity.ok().body("Profile picture uploaded successfully.");
             } catch (IOException e) {
@@ -99,8 +103,11 @@ public class PostController {
     @GetMapping("/posts/picture/{id}")
     public ResponseEntity<Object> getPostPicture(@PathVariable String id) {
         try {
-            System.out.println("getPostPicture for " + id + ".png");
-            ResponseEntity<Object> response = ResponseEntity.ok().body(fileService.downloadFile(id + ".png"));
+            System.out.println("getPostPicture for " + id);
+            PostInfo post = postService.getPostByPostId(id);
+            String filename = post.getPictureName();
+            System.out.println("getPostPicture for " + id + " with filename " + filename);
+            ResponseEntity<Object> response = ResponseEntity.ok().body(fileService.downloadFile(filename));
             // Delete the picture from local storage after sending
             return response;
         } catch (FileDownloadException | IOException e) {

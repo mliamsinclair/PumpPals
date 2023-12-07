@@ -30,6 +30,7 @@ public class PostInfo {
     private ArrayList<String> likers = new ArrayList<String>(); // Add likers field
     private String postId;
     private boolean hasPicture;
+    private String pictureName;
 
     public boolean getHasPicture() {
         return this.hasPicture;

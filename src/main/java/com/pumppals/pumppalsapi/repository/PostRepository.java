@@ -12,4 +12,5 @@ import com.pumppals.pumppalsapi.model.PostInfo;
 @Repository
 public interface PostRepository extends MongoRepository<PostInfo, ObjectId> {
     List<PostInfo> findByUsername(String username);
+    Optional<PostInfo> findByPostId(String postId);
 }

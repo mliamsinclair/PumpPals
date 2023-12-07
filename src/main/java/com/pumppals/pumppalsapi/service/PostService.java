@@ -106,4 +106,8 @@ public class PostService {
         posts.sort((p1, p2) -> p2.getUploadDate().compareTo(p1.getUploadDate()));
         return posts;
     }
+
+    public PostInfo getPostByPostId(String postId) {
+        return postRepository.findByPostId(postId).orElse(null);
+    }
 }
