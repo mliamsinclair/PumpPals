@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.pumppals.pumppalsapi.PumppalsApiApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.220 s -- in com.pumppals.pumppalsapi.PumppalsApiApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.099 s -- in com.pumppals.pumppalsapi.PumppalsApiApplicationTests

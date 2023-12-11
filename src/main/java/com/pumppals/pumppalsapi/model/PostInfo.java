@@ -23,11 +23,11 @@ public class PostInfo {
     private String name;
     private String title;
     private String content;
-    private LocalDateTime uploadDate; // Add uploadDate field
-    private int likes = 0; // Add likes field
-    private ArrayList<String> comments = new ArrayList<String>(); // Add comments field
-    private ArrayList<String> commenters = new ArrayList<String>(); // Add commenters field
-    private ArrayList<String> likers = new ArrayList<String>(); // Add likers field
+    private LocalDateTime uploadDate; 
+    private int likes = 0;
+    private ArrayList<String> comments = new ArrayList<String>();
+    private ArrayList<String> commenters = new ArrayList<String>();
+    private ArrayList<String> likers = new ArrayList<String>();
     private String postId;
     private boolean hasPicture;
     private String pictureName;
