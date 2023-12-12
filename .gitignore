@@ -3,3 +3,9 @@
 
 === ENV Files ===
 .env
+
+== target folder ==
+target/
+*.class
+*.jar
+*.jar.original
