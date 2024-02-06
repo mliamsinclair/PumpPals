@@ -10,3 +10,4 @@ target/*
 *.jar
 *.jar.original
 target/classes/*
+target/test-classes/*

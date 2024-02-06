@@ -11,6 +11,10 @@ Before running the application, make sure you have the following:
 - Set up a working MongoDB cluster.
 - Create an Amazon S3 bucket and an IAM service worker with the necessary permissions.
 
+## Documentation
+
+For detailed documentation on this project, please refer to the [PumpPals Documentation](https://mliamsinclair.dev/assets/PumpPalsDocumentation-oQJvCSsV.pdf).
+
 ## Running the Application
 
 Once you have met all the prerequisites, follow these steps to run the application:
